@@ -17,14 +17,12 @@
 // along with mesh_sampling.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>           // Output data structure
-#include <assimp/postprocess.h>     // Post processing flags
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 
+#include <mesh_sampling/assimp_scene.h>
 #include <mesh_sampling/weighted_random_sampling.h>
 
 using namespace mesh_sampling;
@@ -33,28 +31,21 @@ int main(int /* argc */, char** /* argv */)
 {
   std::string model_path = "../../getafe.stl";
 
-  // Create an instance of the Importer class
-  Assimp::Importer importer;
-  // And have it read the given file with some example postprocessing
-  // Usually - if speed is not the most important aspect for you - you'll
-  // propably to request more postprocessing than we do in this example.
-  const aiScene* scene = importer.ReadFile( model_path,
-        aiProcess_CalcTangentSpace       |
-        aiProcess_Triangulate            |
-        aiProcess_JoinIdenticalVertices  |
-        aiProcess_SortByPType);
+  std::unique_ptr<ASSIMPScene> mesh = nullptr;
 
-  // If the import failed, report it
-  if( !scene)
+  try
   {
-    std::cerr << importer.GetErrorString() << std::endl; ;
-    return false;
+    mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(model_path));
+  }
+  catch (std::runtime_error& e)
+  {
+    std::cerr << e.what() << std::endl;
+    return -1;
   }
 
-  WeightedRandomSampling sampling(scene);
+  WeightedRandomSampling sampling(mesh->scene());
   auto cloud = sampling.weighted_random_sampling();
 
-  pcl::io::savePCDFileASCII ("/tmp/test_pcd.pcd", *cloud);
+  pcl::io::savePCDFileASCII("/tmp/test_pcd.pcd", *cloud);
   pcl::io::savePLYFileASCII("/tmp/test.ply", *cloud);
-
 }
