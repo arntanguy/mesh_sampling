@@ -109,6 +109,8 @@ class WeightedRandomSampling
       v1_xyz, v2_xyz, v3_xyz;
   std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>>
       v1_rgb, v2_rgb, v3_rgb;
+  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>>
+      v1_normal, v2_normal, v3_normal;
   std::vector<double> areas;
   double total_area = 0;
 
@@ -145,6 +147,24 @@ class WeightedRandomSampling
         v1_rgb.emplace_back(255 * Eigen::Vector3f::Ones());
         v2_rgb.emplace_back(255 * Eigen::Vector3f::Ones());
         v3_rgb.emplace_back(255 * Eigen::Vector3f::Ones());
+      }
+
+      if (mesh->HasNormals())
+      {
+        auto normals = mesh->mNormals;
+        const auto& n1 = normals[face.mIndices[0]];
+        const auto& n2 = normals[face.mIndices[1]];
+        const auto& n3 = normals[face.mIndices[2]];
+        v1_normal.emplace_back(Eigen::Vector3f{n1.x, n1.y, n1.z});
+        v2_normal.emplace_back(Eigen::Vector3f{n2.x, n2.y, n2.z});
+        v3_normal.emplace_back(Eigen::Vector3f{n3.x, n3.y, n3.z});
+      }
+      else
+      {
+        // Should always have normals if loaded with ASSIMPScene loader
+        v1_normal.emplace_back(Eigen::Vector3f{0., 0., 0.});
+        v2_normal.emplace_back(Eigen::Vector3f{0., 0., 0.});
+        v3_normal.emplace_back(Eigen::Vector3f{0., 0., 0.});
       }
 
       const auto area = triangle_area(v1, v2, v3);
@@ -199,23 +219,61 @@ class WeightedRandomSampling
     process_scene(scene);
   }
 
-  // This function computes and fill the point color only if the PointT supports
-  // it (PointXYZRGB...)
-  template<class Q = PointT>
-    typename std::enable_if<pcl::traits::has_color<Q>::value, void>::type
- fill_color(PointT& p, const size_t idx)
+  /**
+   * @brief This function computes and fill the point color only if the PointT
+   * supports it (PointXYZRGB...)
+   *
+   * @param[out] p point to fill
+   * @param[in] idx triangle id
+   *
+   * @return
+   */
+  template <class Q = PointT>
+  typename std::enable_if<pcl::traits::has_color<Q>::value, void>::type
+  fill_color(PointT& p, const size_t idx)
   {
-        // HAS COLOR
-        const Eigen::Vector3f color = random_point_in_triangle(v1_rgb[idx], v2_rgb[idx], v3_rgb[idx]);
-        p.r = static_cast<uint8_t>(color.x());
-        p.g = static_cast<uint8_t>(color.y());
-        p.b = static_cast<uint8_t>(color.z());
+    // HAS COLOR
+    const Eigen::Vector3f color =
+        random_point_in_triangle(v1_rgb[idx], v2_rgb[idx], v3_rgb[idx]);
+    p.r = static_cast<uint8_t>(color.x());
+    p.g = static_cast<uint8_t>(color.y());
+    p.b = static_cast<uint8_t>(color.z());
   }
 
   // Does nothing if the PointT does not support colors
-  template<class Q = PointT>
-    typename std::enable_if<!pcl::traits::has_color<Q>::value, void>::type
+  template <class Q = PointT>
+  typename std::enable_if<!pcl::traits::has_color<Q>::value, void>::type
   fill_color(PointT& /*p*/, const size_t /*idx*/)
+  {
+  }
+
+  /**
+   * @brief This function computes and fill the point normals only if the PointT
+   * supports it (PointNormal, PointXYZRGBNormal...)
+   *
+   * @param[out] p point to fill
+   * @param[in] idx triangle id
+   *
+   * @return void
+   */
+  template <class Q = PointT>
+  typename std::enable_if<pcl::traits::has_normal<Q>::value, void>::type
+  fill_normal(PointT& p, const size_t idx)
+  {
+    const auto& n1 = v1_normal[idx];
+    const auto& n2 = v2_normal[idx];
+    const auto& n3 = v3_normal[idx];
+    Eigen::Vector3f n = (n1 + n2 + n3).normalized();
+
+    p.normal_x = n.x();
+    p.normal_y = n.y();
+    p.normal_z = n.z();
+  }
+
+  // Does nothing if the PointT does not support colors
+  template <class Q = PointT>
+  typename std::enable_if<!pcl::traits::has_normal<Q>::value, void>::type
+  fill_normal(PointT& /*p*/, const size_t /*idx*/)
   {
   }
 
@@ -254,6 +312,7 @@ class WeightedRandomSampling
       p.y = point.y();
       p.z = point.z();
       fill_color(p, idx);
+      fill_normal(p, idx);
       cloud->push_back(p);
     }
 

@@ -19,7 +19,7 @@ class ASSIMPScene
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll
     // propably to request more postprocessing than we do in this example.
-    scene_(importer.ReadFile(model_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType))
+    scene_(importer.ReadFile(model_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals | aiProcess_FixInfacingNormals))
   {
     // If the import failed, report it
     if (!scene_)

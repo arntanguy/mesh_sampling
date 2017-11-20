@@ -27,10 +27,35 @@
 
 using namespace mesh_sampling;
 
-int main(int /* argc */, char** /* argv */)
+void help()
 {
-  std::string model_path = "../../getafe.stl";
+  std::cout << "Usage: ./example path_to_model" << std::endl;
+  exit(1);
+}
 
+int main(int argc, char** argv)
+{
+  std::string model_path = "";
+  if (argc > 1)
+  {
+    if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
+    {
+      help();
+    }
+    else
+    {
+      model_path = argv[1];
+    }
+  }
+  else
+  {
+    help();
+  }
+
+  // ASSIMPScene loader should be used and kept in scope for as long as the mesh
+  // is needed.
+  // The default constructor loads the mesh with all the required
+  // post-processing according to point type (normal computation...)
   std::unique_ptr<ASSIMPScene> mesh = nullptr;
   try
   {
@@ -42,9 +67,20 @@ int main(int /* argc */, char** /* argv */)
     return -1;
   }
 
-  WeightedRandomSampling<pcl::PointXYZRGB> sampling(mesh->scene());
-  auto cloud = sampling.weighted_random_sampling();
+  WeightedRandomSampling<pcl::PointXYZ> sampling_xyz(mesh->scene());
+  auto cloud_xyz = sampling_xyz.weighted_random_sampling();
+  pcl::io::savePCDFileASCII("/tmp/example_xyz.pcd", *cloud_xyz);
 
-  pcl::io::savePCDFileASCII("/tmp/test_pcd.pcd", *cloud);
-  pcl::io::savePLYFileASCII("/tmp/test.ply", *cloud);
+  WeightedRandomSampling<pcl::PointXYZRGB> sampling_rgb(mesh->scene());
+  auto cloud_rgb = sampling_rgb.weighted_random_sampling();
+  pcl::io::savePCDFileASCII("/tmp/example_rgb.pcd", *cloud_rgb);
+
+  WeightedRandomSampling<pcl::PointNormal> sampling_normal(mesh->scene());
+  auto cloud_normal = sampling_normal.weighted_random_sampling();
+  pcl::io::savePCDFileASCII("/tmp/example_normal.pcd", *cloud_normal);
+
+  WeightedRandomSampling<pcl::PointXYZRGBNormal> sampling_rgb_normal(
+      mesh->scene());
+  auto cloud_rgb_normal = sampling_rgb_normal.weighted_random_sampling();
+  pcl::io::savePCDFileASCII("/tmp/example_rgb_normal.pcd", *cloud_rgb_normal);
 }
