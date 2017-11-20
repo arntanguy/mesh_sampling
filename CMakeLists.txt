@@ -4,7 +4,7 @@ include(cmake/base.cmake)
 include(cmake/eigen.cmake)
 include(cmake/boost.cmake)
 
-set(PROJECT_NAME gram_savitzky_golay)
+set(PROJECT_NAME mesh_sampling)
 set(PROJECT_DESCRIPTION "Sample pointcloud from meshes")
 set(PROJECT_URL "")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

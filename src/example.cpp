@@ -32,7 +32,6 @@ int main(int /* argc */, char** /* argv */)
   std::string model_path = "../../getafe.stl";
 
   std::unique_ptr<ASSIMPScene> mesh = nullptr;
-
   try
   {
     mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(model_path));
@@ -43,7 +42,7 @@ int main(int /* argc */, char** /* argv */)
     return -1;
   }
 
-  WeightedRandomSampling sampling(mesh->scene());
+  WeightedRandomSampling<pcl::PointXYZRGB> sampling(mesh->scene());
   auto cloud = sampling.weighted_random_sampling();
 
   pcl::io::savePCDFileASCII("/tmp/test_pcd.pcd", *cloud);
