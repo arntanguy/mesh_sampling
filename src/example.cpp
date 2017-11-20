@@ -68,8 +68,9 @@ int main(int argc, char** argv)
   }
 
   WeightedRandomSampling<pcl::PointXYZ> sampling_xyz(mesh->scene());
-  auto cloud_xyz = sampling_xyz.weighted_random_sampling();
+  auto cloud_xyz = sampling_xyz.weighted_random_sampling(10000);
   pcl::io::savePCDFileASCII("/tmp/example_xyz.pcd", *cloud_xyz);
+  std::cout << "Cloud size: " << cloud_xyz->size() << ", expected: " << 10000 << std::endl;
 
   WeightedRandomSampling<pcl::PointXYZRGB> sampling_rgb(mesh->scene());
   auto cloud_rgb = sampling_rgb.weighted_random_sampling();

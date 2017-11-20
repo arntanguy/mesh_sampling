@@ -302,7 +302,8 @@ class WeightedRandomSampling
 
     const auto random_idx =
         weighted_random_choice_indices<int, double>(probabilities, N);
-    std::unique_ptr<CloudT> cloud(new CloudT(static_cast<uint32_t>(N), 1));
+    std::unique_ptr<CloudT> cloud(new CloudT());
+    cloud->reserve(static_cast<uint32_t>(N));
     for (const auto idx : random_idx)
     {
       const Eigen::Vector3f point =
