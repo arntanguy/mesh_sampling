@@ -22,20 +22,21 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 
-#include <mesh_sampling/assimp_scene.h>
-#include <mesh_sampling/weighted_random_sampling.h>
+#include "mesh_sampling/assimp_scene.h"
+#include "mesh_sampling/weighted_random_sampling.h"
 
 using namespace mesh_sampling;
 
 void help()
 {
-  std::cout << "Usage: ./example path_to_model" << std::endl;
+  std::cout << "Usage: ./example path_to_model number_of_points" << std::endl;
   exit(1);
 }
 
 int main(int argc, char** argv)
 {
   std::string model_path = "";
+  int N = 100000;
   if (argc > 1)
   {
     if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
@@ -45,6 +46,10 @@ int main(int argc, char** argv)
     else
     {
       model_path = argv[1];
+    }
+    if(argc == 3)
+    {
+      N = atoi(argv[2]);
     }
   }
   else
@@ -67,21 +72,22 @@ int main(int argc, char** argv)
     return -1;
   }
 
+  std::cout << "Sampling " << N << " points from "  << model_path << std::endl;
   WeightedRandomSampling<pcl::PointXYZ> sampling_xyz(mesh->scene());
-  auto cloud_xyz = sampling_xyz.weighted_random_sampling(10000);
+  auto cloud_xyz = sampling_xyz.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_xyz.pcd", *cloud_xyz);
-  std::cout << "Cloud size: " << cloud_xyz->size() << ", expected: " << 10000 << std::endl;
+  std::cout << "Cloud size: " << cloud_xyz->size() << ", expected: " << N << std::endl;
 
   WeightedRandomSampling<pcl::PointXYZRGB> sampling_rgb(mesh->scene());
-  auto cloud_rgb = sampling_rgb.weighted_random_sampling();
+  auto cloud_rgb = sampling_rgb.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_rgb.pcd", *cloud_rgb);
 
   WeightedRandomSampling<pcl::PointNormal> sampling_normal(mesh->scene());
-  auto cloud_normal = sampling_normal.weighted_random_sampling();
+  auto cloud_normal = sampling_normal.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_normal.pcd", *cloud_normal);
 
   WeightedRandomSampling<pcl::PointXYZRGBNormal> sampling_rgb_normal(
       mesh->scene());
-  auto cloud_rgb_normal = sampling_rgb_normal.weighted_random_sampling();
+  auto cloud_rgb_normal = sampling_rgb_normal.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_rgb_normal.pcd", *cloud_rgb_normal);
 }

@@ -2,6 +2,9 @@ mesh_sampling
 ==
 
 C++ Implementation of pointcloud generation from mesh sampling methods.
+
+![Sampling example](https://raw.githubusercontent.com/arntanguy/mesh_sampling/master/sample/sampling_example.png)
+
 So far, the following samplers have been implemented:
 
 - Weighted random sampling: generates a given number of points uniformely distributed according to triangle areas.
