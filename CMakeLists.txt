@@ -49,4 +49,6 @@ include(\"\$\{CMAKE_CURRENT_LIST_DIR\}/mesh_sampling_3rd_party_PCLConfig.cmake\"
 )
 
 add_subdirectory(src)
-
+if(${BUILD_TESTING})
+  add_subdirectory(tests)
+endif()

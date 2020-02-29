@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with mesh_sampling.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "mesh_sampling/assimp_scene.h"
-#include "mesh_sampling/weighted_random_sampling.h"
 #include <iostream>
+#include <mesh_sampling/assimp_scene.h>
+#include <mesh_sampling/weighted_random_sampling.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
