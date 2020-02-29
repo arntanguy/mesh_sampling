@@ -12,6 +12,48 @@ So far, the following samplers have been implemented:
 
 It is provided as-is, and could probably be optimized should the need arise. Feel free to submit merge requests.
 
+Installation
+==
+
+Requirements:
+- cmake >3.11
+- Eigen3
+- PCL 1.7
+
+If you do not already have a recent cmake installation (>3.11), you will need to install it. On Ubuntu bionic, this can be done by adding the official [Kitware PPA](https://apt.kitware.com/), and updating cmake
+
+For bionic:
+
+```sh
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+sudo apt-get update
+```
+
+For xenial:
+
+```sh
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ xenial-rc main'
+sudo apt-get update
+```
+
+Then install cmake
+```sh
+sudo apt install cmake
+```
+
+
+You can now build and install this package
+
+```
+git clone --recursive https://github.com/arntanguy/mesh_sampling.git
+cd mesh_sampling
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+```
 
 Example
 ==

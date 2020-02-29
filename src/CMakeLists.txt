@@ -1,10 +1,12 @@
 add_library(mesh_sampling SHARED
   weighted_random_sampling.cpp
   )
-pkg_config_use_dependency(mesh_sampling assimp)
-target_link_libraries(mesh_sampling ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES})
+target_link_libraries(mesh_sampling PUBLIC mesh_sampling::assimp)
+target_link_libraries(mesh_sampling PUBLIC mesh_sampling::PCL)
+target_include_directories(mesh_sampling PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 
 install(TARGETS mesh_sampling 
+  EXPORT "${TARGETS_EXPORT_NAME}"
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
