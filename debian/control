@@ -1,0 +1,22 @@
+Source: mesh_sampling
+Priority: optional
+Maintainer: Pierre Gergondet <pierre.gergondet+ppa@gmail.com>
+Standards-Version: 3.9.5
+Section: libdevel
+Homepage: http://github.com/jrl-umi3218/SpaceVecAlg
+Vcs-Git: git://github.com/jrl-umi3218/SpaceVecAlg -b debian
+Vcs-Browser: http://github.com/jrl-umi3218/SpaceVecAlg
+Build-Depends: debhelper (>= 9),
+ pkg-config,
+ cmake,
+ doxygen,
+ libpcl-dev
+ libeigen3-dev (>= 3.2),
+
+Package: mesh_sampling
+Section: libdevel
+Architecture: any
+Depends: pkg-config,
+         ${misc:Depends}
+Description: mesh_sampling Automatic sampling of 3D pointcloud from CAD models
+ mesh_sampling implements samplers that convert from 3D CAD models to PCL pointcloud (PCD)

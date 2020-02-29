@@ -1,6 +1,10 @@
 mesh_sampling
 ==
 
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![CI of mesh_sampling](https://github.com/arntanguy/mesh_sampling/workflows/CI%20of%20mesh_sampling/badge.svg)](https://github.com/arntanguy/mesh_sampling/actions?query=workflow%3A%22CI+of+mesh_sampling%22)
+[![Package mesh_sampling](https://github.com/arntanguy/mesh_sampling/workflows/Package%20mesh_sampling/badge.svg)](https://github.com/arntanguy/mesh_sampling/actions?query=workflow%3A%22Package%20mesh_sampling%22)
+
 C++ Implementation of pointcloud generation from mesh sampling methods.
 
 ![Sampling example](https://raw.githubusercontent.com/arntanguy/mesh_sampling/master/sample/sampling_example.png)
