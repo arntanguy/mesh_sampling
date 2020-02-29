@@ -1,19 +1,19 @@
-Source: mesh_sampling
+Source: mesh-sampling
 Priority: optional
-Maintainer: Pierre Gergondet <pierre.gergondet+ppa@gmail.com>
+Maintainer: Arnaud TANGUY <arn.tanguy+ppa@gmail.com>
 Standards-Version: 3.9.5
 Section: libdevel
-Homepage: http://github.com/jrl-umi3218/SpaceVecAlg
-Vcs-Git: git://github.com/jrl-umi3218/SpaceVecAlg -b debian
-Vcs-Browser: http://github.com/jrl-umi3218/SpaceVecAlg
+Homepage: http://github.com/arntanguy/mesh_sampling
+Vcs-Git: git://github.com/arntanguy/mesh_sampling
+Vcs-Browser: http://github.com/arntanguy/mesh_sampling
 Build-Depends: debhelper (>= 9),
- pkg-config,
- cmake,
- doxygen,
- libpcl-dev
- libeigen3-dev (>= 3.2),
+               pkg-config,
+               cmake,
+               doxygen,
+               libpcl-dev,
+               libeigen3-dev (>= 3.2)
 
-Package: mesh_sampling
+Package: mesh-sampling
 Section: libdevel
 Architecture: any
 Depends: pkg-config,

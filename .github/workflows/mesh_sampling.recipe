@@ -1,0 +1,3 @@
+# git-build-recipe format 0.4 deb-version {debversion}+{time}+{git-commit}
+https://github.com/arntanguy/mesh_sampling @REF@
+run git submodule update --init
