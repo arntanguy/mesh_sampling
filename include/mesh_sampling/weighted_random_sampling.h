@@ -17,22 +17,21 @@
 // along with mesh_sampling.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <assimp/scene.h>  // Output data structure
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
 #include <Eigen/Core>
 #include <algorithm>
+#include <assimp/scene.h> // Output data structure
 #include <memory>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
 #include <random>
 #include <vector>
 
 namespace mesh_sampling
 {
-double triangle_area(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2,
-                     const Eigen::Vector3f& v3);
-Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f& v1,
-                                         const Eigen::Vector3f& v2,
-                                         const Eigen::Vector3f& v3);
+double triangle_area(const Eigen::Vector3f & v1, const Eigen::Vector3f & v2, const Eigen::Vector3f & v3);
+Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f & v1,
+                                         const Eigen::Vector3f & v2,
+                                         const Eigen::Vector3f & v3);
 
 /**
  * @brief Generates indices based on probabilities
@@ -43,18 +42,14 @@ Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f& v1,
  * @return return n sampled indices from the probability distribution. Each
  * index will be between [0, probabilities.size()[
  */
-template <typename SampleT, typename ProbaT>
-std::vector<SampleT> weighted_random_choice_indices(
-    const std::vector<ProbaT>& probabilities, const size_t n)
+template<typename SampleT, typename ProbaT>
+std::vector<SampleT> weighted_random_choice_indices(const std::vector<ProbaT> & probabilities, const size_t n)
 {
   std::default_random_engine generator;
-  std::discrete_distribution<int> distribution(probabilities.begin(),
-                                               probabilities.end());
+  std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());
 
   std::vector<int> indices(n);
-  std::generate(indices.begin(), indices.end(), [&generator, &distribution]() {
-    return distribution(generator);
-  });
+  std::generate(indices.begin(), indices.end(), [&generator, &distribution]() { return distribution(generator); });
   return indices;
 }
 
@@ -71,19 +66,18 @@ std::vector<SampleT> weighted_random_choice_indices(
  *
  * @return The generated random samples
  */
-template <typename SampleT, typename ProbaT>
-std::vector<SampleT> weighted_random_choice(
-    const std::vector<SampleT>& samples,
-    const std::vector<ProbaT>& probabilities, const size_t n)
+template<typename SampleT, typename ProbaT>
+std::vector<SampleT> weighted_random_choice(const std::vector<SampleT> & samples,
+                                            const std::vector<ProbaT> & probabilities,
+                                            const size_t n)
 {
-  const auto& indices = weighted_random_choice_indices(probabilities, n);
+  const auto & indices = weighted_random_choice_indices(probabilities, n);
   std::vector<SampleT> vec(n);
-  std::transform(indices.begin(), indices.end(), vec.begin(),
-                 [&samples](int index) { return samples[index]; });
+  std::transform(indices.begin(), indices.end(), vec.begin(), [&samples](int index) { return samples[index]; });
   return vec;
 }
 
-template <typename T>
+template<typename T>
 T randMToN(T M, T N)
 {
   return M + (static_cast<T>(std::rand()) / (RAND_MAX / (N - M)));
@@ -97,32 +91,29 @@ T randMToN(T M, T N)
  * https://github.com/daavoo/pyntcloud/blob/master/pyntcloud/samplers/s_mesh.py
  * https://medium.com/@daviddelaiglesiacastro/3f-point-cloud-generation-from-3f-triangular-mesh-bbb602ecf238
  */
-template <typename PointT>
+template<typename PointT>
 class WeightedRandomSampling
 {
   using CloudT = pcl::PointCloud<PointT>;
 
- private:
-  const aiScene* scene;
+private:
+  const aiScene * scene;
 
-  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>>
-      v1_xyz, v2_xyz, v3_xyz;
-  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>>
-      v1_rgb, v2_rgb, v3_rgb;
-  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>>
-      v1_normal, v2_normal, v3_normal;
+  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>> v1_xyz, v2_xyz, v3_xyz;
+  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>> v1_rgb, v2_rgb, v3_rgb;
+  std::vector<Eigen::Vector3f, Eigen::aligned_allocator<Eigen::Vector3f>> v1_normal, v2_normal, v3_normal;
   std::vector<double> areas;
   double total_area = 0;
 
-  void process_triangle(const aiMesh* mesh, const aiFace& face)
+  void process_triangle(const aiMesh * mesh, const aiFace & face)
   {
     // If face is a triangle
-    if (face.mNumIndices == 3)
+    if(face.mNumIndices == 3)
     {
       auto vertices = mesh->mVertices;
-      const auto& fv1 = vertices[face.mIndices[0]];
-      const auto& fv2 = vertices[face.mIndices[1]];
-      const auto& fv3 = vertices[face.mIndices[2]];
+      const auto & fv1 = vertices[face.mIndices[0]];
+      const auto & fv2 = vertices[face.mIndices[1]];
+      const auto & fv3 = vertices[face.mIndices[2]];
 
       Eigen::Vector3f v1, v2, v3;
       v1 << fv1.x, fv1.y, fv1.z;
@@ -132,12 +123,12 @@ class WeightedRandomSampling
       v2_xyz.push_back(v2);
       v3_xyz.push_back(v3);
 
-      if (mesh->HasVertexColors(0))
+      if(mesh->HasVertexColors(0))
       {
         auto color = mesh->mColors[0];
-        const auto& cv1 = color[face.mIndices[0]];
-        const auto& cv2 = color[face.mIndices[1]];
-        const auto& cv3 = color[face.mIndices[2]];
+        const auto & cv1 = color[face.mIndices[0]];
+        const auto & cv2 = color[face.mIndices[1]];
+        const auto & cv3 = color[face.mIndices[2]];
         v1_rgb.emplace_back(Eigen::Vector3f{cv1.r, cv1.g, cv1.b});
         v2_rgb.emplace_back(Eigen::Vector3f{cv2.r, cv2.g, cv2.b});
         v3_rgb.emplace_back(Eigen::Vector3f{cv3.r, cv3.g, cv3.b});
@@ -149,12 +140,12 @@ class WeightedRandomSampling
         v3_rgb.emplace_back(255 * Eigen::Vector3f::Ones());
       }
 
-      if (mesh->HasNormals())
+      if(mesh->HasNormals())
       {
         auto normals = mesh->mNormals;
-        const auto& n1 = normals[face.mIndices[0]];
-        const auto& n2 = normals[face.mIndices[1]];
-        const auto& n3 = normals[face.mIndices[2]];
+        const auto & n1 = normals[face.mIndices[0]];
+        const auto & n2 = normals[face.mIndices[1]];
+        const auto & n3 = normals[face.mIndices[2]];
         v1_normal.emplace_back(Eigen::Vector3f{n1.x, n1.y, n1.z});
         v2_normal.emplace_back(Eigen::Vector3f{n2.x, n2.y, n2.z});
         v3_normal.emplace_back(Eigen::Vector3f{n3.x, n3.y, n3.z});
@@ -173,17 +164,17 @@ class WeightedRandomSampling
     }
   }
 
-  void process_mesh(const aiMesh* mesh)
+  void process_mesh(const aiMesh * mesh)
   {
-    if (!mesh->HasFaces()) return;
+    if(!mesh->HasFaces()) return;
 
     // Count total number of triangles
     size_t total_triangles = 0;
-    for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+    for(unsigned int i = 0; i < mesh->mNumFaces; ++i)
     {
       const auto face = mesh->mFaces[i];
       // If face is a triangle
-      if (face.mNumIndices == 3)
+      if(face.mNumIndices == 3)
       {
         ++total_triangles;
       }
@@ -196,25 +187,25 @@ class WeightedRandomSampling
     areas.reserve(total_triangles);
 
     // Process each triangle
-    for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+    for(unsigned int i = 0; i < mesh->mNumFaces; ++i)
     {
       const auto face = mesh->mFaces[i];
       process_triangle(mesh, face);
     }
   }
 
-  void process_scene(const aiScene* scene)
+  void process_scene(const aiScene * scene)
   {
-    if (!scene->HasMeshes()) return;
+    if(!scene->HasMeshes()) return;
 
-    for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+    for(unsigned int i = 0; i < scene->mNumMeshes; ++i)
     {
       process_mesh(scene->mMeshes[i]);
     }
   }
 
- public:
-  WeightedRandomSampling(const aiScene* scene) : scene(scene)
+public:
+  WeightedRandomSampling(const aiScene * scene) : scene(scene)
   {
     process_scene(scene);
   }
@@ -228,22 +219,20 @@ class WeightedRandomSampling
    *
    * @return
    */
-  template <class Q = PointT>
-  typename std::enable_if<pcl::traits::has_color<Q>::value, void>::type
-  fill_color(PointT& p, const size_t idx)
+  template<class Q = PointT>
+  typename std::enable_if<pcl::traits::has_color<Q>::value, void>::type fill_color(PointT & p, const size_t idx)
   {
     // HAS COLOR
-    const Eigen::Vector3f color =
-        random_point_in_triangle(v1_rgb[idx], v2_rgb[idx], v3_rgb[idx]);
+    const Eigen::Vector3f color = random_point_in_triangle(v1_rgb[idx], v2_rgb[idx], v3_rgb[idx]);
     p.r = static_cast<uint8_t>(color.x());
     p.g = static_cast<uint8_t>(color.y());
     p.b = static_cast<uint8_t>(color.z());
   }
 
   // Does nothing if the PointT does not support colors
-  template <class Q = PointT>
-  typename std::enable_if<!pcl::traits::has_color<Q>::value, void>::type
-  fill_color(PointT& /*p*/, const size_t /*idx*/)
+  template<class Q = PointT>
+  typename std::enable_if<!pcl::traits::has_color<Q>::value, void>::type fill_color(PointT & /*p*/,
+                                                                                    const size_t /*idx*/)
   {
   }
 
@@ -256,13 +245,12 @@ class WeightedRandomSampling
    *
    * @return void
    */
-  template <class Q = PointT>
-  typename std::enable_if<pcl::traits::has_normal<Q>::value, void>::type
-  fill_normal(PointT& p, const size_t idx)
+  template<class Q = PointT>
+  typename std::enable_if<pcl::traits::has_normal<Q>::value, void>::type fill_normal(PointT & p, const size_t idx)
   {
-    const auto& n1 = v1_normal[idx];
-    const auto& n2 = v2_normal[idx];
-    const auto& n3 = v3_normal[idx];
+    const auto & n1 = v1_normal[idx];
+    const auto & n2 = v2_normal[idx];
+    const auto & n3 = v3_normal[idx];
     Eigen::Vector3f n = (n1 + n2 + n3).normalized();
 
     p.normal_x = n.x();
@@ -271,9 +259,9 @@ class WeightedRandomSampling
   }
 
   // Does nothing if the PointT does not support colors
-  template <class Q = PointT>
-  typename std::enable_if<!pcl::traits::has_normal<Q>::value, void>::type
-  fill_normal(PointT& /*p*/, const size_t /*idx*/)
+  template<class Q = PointT>
+  typename std::enable_if<!pcl::traits::has_normal<Q>::value, void>::type fill_normal(PointT & /*p*/,
+                                                                                      const size_t /*idx*/)
   {
   }
 
@@ -291,23 +279,21 @@ class WeightedRandomSampling
     std::vector<double> probabilities;
     probabilities.reserve(areas.size());
     double total = 0;
-    for (const auto& area : areas)
+    for(const auto & area : areas)
     {
       total += area / total_area;
       probabilities.push_back(area / total_area);
     }
 
     size_t N = N_samples;
-    if (N_samples == 0) N = areas.size();
+    if(N_samples == 0) N = areas.size();
 
-    const auto random_idx =
-        weighted_random_choice_indices<int, double>(probabilities, N);
+    const auto random_idx = weighted_random_choice_indices<int, double>(probabilities, N);
     std::unique_ptr<CloudT> cloud(new CloudT());
     cloud->reserve(static_cast<uint32_t>(N));
-    for (const auto idx : random_idx)
+    for(const auto idx : random_idx)
     {
-      const Eigen::Vector3f point =
-          random_point_in_triangle(v1_xyz[idx], v2_xyz[idx], v3_xyz[idx]);
+      const Eigen::Vector3f point = random_point_in_triangle(v1_xyz[idx], v2_xyz[idx], v3_xyz[idx]);
       PointT p;
       p.x = point.x();
       p.y = point.y();
@@ -320,4 +306,4 @@ class WeightedRandomSampling
     return cloud;
   }
 };
-} /* mesh_sampling */
+} // namespace mesh_sampling

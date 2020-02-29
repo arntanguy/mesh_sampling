@@ -27,9 +27,7 @@ template class WeightedRandomSampling<pcl::PointXYZRGB>;
 template class WeightedRandomSampling<pcl::PointNormal>;
 template class WeightedRandomSampling<pcl::PointXYZRGBNormal>;
 
-
-double triangle_area(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2,
-                     const Eigen::Vector3f& v3)
+double triangle_area(const Eigen::Vector3f & v1, const Eigen::Vector3f & v2, const Eigen::Vector3f & v3)
 {
   return 0.5 * (v2 - v1).cross(v3 - v1).norm();
 }
@@ -42,13 +40,13 @@ double triangle_area(const Eigen::Vector3f& v1, const Eigen::Vector3f& v2,
  *
  * @return a random point in the triangle (v1,v2,v3)
  */
-Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f& v1,
-                                         const Eigen::Vector3f& v2,
-                                         const Eigen::Vector3f& v3)
+Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f & v1,
+                                         const Eigen::Vector3f & v2,
+                                         const Eigen::Vector3f & v3)
 {
   float u = randMToN<float>(0, 1);
   float v = randMToN<float>(0, 1);
-  if (u + v > 1)
+  if(u + v > 1)
   {
     u = 1 - u;
     v = 1 - v;
@@ -56,5 +54,4 @@ Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f& v1,
   return (v1 * u) + (v2 * v) + ((1 - (u + v)) * v3);
 }
 
-
-} /* mesh_sampling */
+} // namespace mesh_sampling

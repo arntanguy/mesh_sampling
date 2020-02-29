@@ -1,0 +1,57 @@
+name: CI of mesh_sampling
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install clang-format-6.0
+      run: |
+        sudo apt-get -qq update
+        sudo apt-get -qq remove clang-6.0 libclang1-6.0 libclang-common-6.0-dev libllvm6.0
+        sudo apt-get -qq install clang-format-6.0 clang-format
+    - name: Run clang-format-check
+      run: |
+        ./.clang-format-check.sh
+
+  build:
+    needs: clang-format
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04]
+        build-type: [RelWithDebInfo, Release]
+        compiler: [gcc, clang]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    - name: Install cmake
+      run: |
+        wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
+        sudo apt-add-repository -y 'deb https://apt.kitware.com/ubuntu/ bionic main'
+        sudo apt-get -qq update
+        sudo apt-get -qq install cmake
+        cmake --version
+    - name: Install dependencies
+      uses: jrl-umi3218/github-actions/install-dependencies@master
+      with:
+        compiler: ${{ matrix.compiler }}
+        build-type: ${{ matrix.build-type }}
+        ubuntu: |
+          apt: libeigen3-dev libpcl-dev libassimp-dev libboost-test-dev doxygen doxygen-latex
+    - name: Build and test
+      uses: jrl-umi3218/github-actions/build-cmake-project@master
+      with:
+        compiler: ${{ matrix.compiler }}
+        build-type: ${{ matrix.build-type }}

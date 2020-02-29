@@ -17,13 +17,11 @@
 // along with mesh_sampling.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-
+#include <mesh_sampling/assimp_scene.h>
+#include <mesh_sampling/weighted_random_sampling.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
-
-#include "mesh_sampling/assimp_scene.h"
-#include "mesh_sampling/weighted_random_sampling.h"
 
 using namespace mesh_sampling;
 
@@ -33,13 +31,13 @@ void help()
   exit(1);
 }
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   std::string model_path = "";
   int N = 100000;
-  if (argc > 1)
+  if(argc > 1)
   {
-    if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
+    if(std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
     {
       help();
     }
@@ -66,13 +64,13 @@ int main(int argc, char** argv)
   {
     mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(model_path));
   }
-  catch (std::runtime_error& e)
+  catch(std::runtime_error & e)
   {
     std::cerr << e.what() << std::endl;
     return -1;
   }
 
-  std::cout << "Sampling " << N << " points from "  << model_path << std::endl;
+  std::cout << "Sampling " << N << " points from " << model_path << std::endl;
   WeightedRandomSampling<pcl::PointXYZ> sampling_xyz(mesh->scene());
   auto cloud_xyz = sampling_xyz.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_xyz.pcd", *cloud_xyz);
@@ -86,8 +84,7 @@ int main(int argc, char** argv)
   auto cloud_normal = sampling_normal.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_normal.pcd", *cloud_normal);
 
-  WeightedRandomSampling<pcl::PointXYZRGBNormal> sampling_rgb_normal(
-      mesh->scene());
+  WeightedRandomSampling<pcl::PointXYZRGBNormal> sampling_rgb_normal(mesh->scene());
   auto cloud_rgb_normal = sampling_rgb_normal.weighted_random_sampling(N);
   pcl::io::savePCDFileASCII("/tmp/example_rgb_normal.pcd", *cloud_rgb_normal);
 }
