@@ -17,6 +17,7 @@ on:
   push:
     branches:
       - master
+      - topic/fix_packaging
 
 jobs:
   # This job build binary packages for Ubuntu
@@ -39,7 +40,7 @@ jobs:
         echo "###############"
         cat /tmp/mesh_sampling.recipe
     - name: Build package
-      uses: jrl-umi3218/github-actions/build-package-native@master
+      uses: jrl-umi3218/github-actions/build-package@master
       with:
         dist: ${{ matrix.dist }}
         arch: ${{ matrix.arch }}

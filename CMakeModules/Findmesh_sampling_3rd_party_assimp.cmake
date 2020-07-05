@@ -18,13 +18,13 @@ if(NOT TARGET mesh_sampling::assimp)
   message(STATUS "Checking for module 'ASSIMP'")
   find_package(assimp QUIET)
   if(NOT ${ASSIMP_FOUND})
-    message(FATAL_ERROR "  Could not find the ASSIMP library")
+    message(FATAL_ERROR "Could not find the ASSIMP library")
   else()
-    message(STATUS "  Found assimp")
+    message(STATUS "Found assimp library: ${ASSIMP_LIBRARIES}")
     add_library(mesh_sampling::assimp INTERFACE IMPORTED)
     set_target_properties(mesh_sampling::assimp PROPERTIES
       #INTERFACE_INCLUDE_DIRECTORIES ${ASSIMP_INCLUDE_DIRS}
-      INTERFACE_LINK_LIBRARIES ${ASSIMP_LIBRARIES}
+      INTERFACE_LINK_LIBRARIES "${ASSIMP_LIBRARIES}"
     )
   endif()
 endif()

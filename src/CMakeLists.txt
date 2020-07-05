@@ -14,5 +14,11 @@ install(TARGETS mesh_sampling
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
 
-add_executable(example example.cpp)
-target_link_libraries(example mesh_sampling)
+add_executable(mesh_sampling_bin example.cpp)
+target_link_libraries(mesh_sampling_bin mesh_sampling)
+set_target_properties(mesh_sampling_bin PROPERTIES OUTPUT_NAME mesh_sampling)
+
+install(TARGETS mesh_sampling_bin
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
