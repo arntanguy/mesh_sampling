@@ -1,0 +1,3 @@
+name: mesh_sampling documentation
+gems:
+  - jekyll-redirect-from
