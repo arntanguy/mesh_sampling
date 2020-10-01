@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dist: [focal]
+        dist: [bionic, focal]
         arch: [amd64]
     runs-on: ubuntu-18.04
     steps:
@@ -32,7 +32,7 @@ jobs:
         echo "###############"
         cat /tmp/mesh_sampling.recipe
     - name: Build package
-      uses: jrl-umi3218/github-actions/build-package@master
+      uses: arntanguy/github-actions/build-package@topic/cmake3.11
       with:
         dist: ${{ matrix.dist }}
         arch: ${{ matrix.arch }}
@@ -48,7 +48,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        dist: [focal]
+        dist: [bionic,focal]
         arch: [amd64]
     runs-on: ubuntu-18.04
     steps:
@@ -62,13 +62,13 @@ jobs:
         dist: ${{ matrix.dist }}
         arch: ${{ matrix.arch }}
         subject: arntanguy
-        repo: ppa-head 
+        repo: ppa-head
         package: |
           name: mesh-sampling
           desc: "mesh-sampling Convert CAD models to PCL pointcloud"
           licenses: [BSD 2-Clause]
           vcs_url: https://github.com/arntanguy/mesh_sampling
-        version: 1.0.0 
+        version: 1.0.0
         path: packages-${{ matrix.dist }}-${{ matrix.arch }}
         BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
