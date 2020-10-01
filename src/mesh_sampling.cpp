@@ -27,7 +27,7 @@ using namespace mesh_sampling;
 
 void help()
 {
-  std::cout << "Usage: ./example path_to_model number_of_points" << std::endl;
+  std::cout << "Usage: mesh_sampling path_to_model number_of_points" << std::endl;
   exit(1);
 }
 

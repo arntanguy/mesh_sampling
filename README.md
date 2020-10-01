@@ -1,5 +1,4 @@
-mesh_sampling
-==
+# mesh_sampling
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![CI of mesh_sampling](https://github.com/arntanguy/mesh_sampling/workflows/CI%20of%20mesh_sampling/badge.svg)](https://github.com/arntanguy/mesh_sampling/actions?query=workflow%3A%22CI+of+mesh_sampling%22)
@@ -16,8 +15,24 @@ So far, the following samplers have been implemented:
 
 It is provided as-is, and could probably be optimized should the need arise. Feel free to submit merge requests.
 
-Installation
-==
+## Installation
+
+### From Ubunu packages
+
+```sh
+# Make sure you have required tools
+sudo apt install apt-transport-https lsb-release ca-certificates gnupg
+# Add our key
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key F6D3710D0B5016967A994DFFA650E12EFF6D3EDE
+# Add our repository
+echo "deb https://dl.bintray.com/arntanguy/ppa-head focal main" | sudo tee -a /etc/apt/sources.list.d/arntanguy-head.list
+# Install packages
+sudo apt install libmesh-sampling-dev
+```
+
+For now only Ubuntu focal is supported. I'm planning to make a bionic package in the near future.
+
+### From source
 
 Requirements:
 - cmake >3.11
@@ -59,11 +74,14 @@ make
 sudo make install
 ```
 
-Example
-==
+## Usage
+
+### Exectuable
+
+A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. For the time being no other command line options are supported, feel free to submit a pull request!
 
 ```bash
-mesh_sampling <path_to_model>.<supported_format>
+mesh_sampling </path/to/model> 10000
 pcl_viewer /tmp/example_normal.pcd -normals_scale 5 -normals 1
 pcl_viewer /tmp/example_xyz.pcd
 pcl_viewer /tmp/example_rgb.pcd

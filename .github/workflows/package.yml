@@ -5,19 +5,11 @@ name: Package mesh_sampling
 # On master, it will:
 # - Build packages for selected Debian/Ubuntu distro
 # - Upload the packages to https://dl.bintray.com/arntanguy/ppa-head
-#
-# On tagged versions it will:
-# - Create a GitHub release draft
-# - Attach the sources to the release
-# - Build packages for selected Debian/Ubuntu distro
-# - Upload the packages to https://dl.bintray.com/arntanguy/ppa-head
-# - Finalize the release
 
 on:
   push:
     branches:
       - master
-      - topic/fix_packaging
 
 jobs:
   # This job build binary packages for Ubuntu
