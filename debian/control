@@ -18,7 +18,7 @@ Package: libmesh-sampling-dev
 Section: libdevel
 Architecture: any
 Depends: pkg-config,
-         libmesh-sampling1 (= ${binary:Version}),
+         libmesh-sampling (= ${binary:Version}),
          libeigen3-dev (>= 3.2),
          libpcl-common-dev,
          libpcl-io-dev,
@@ -27,7 +27,7 @@ Depends: pkg-config,
 Description: mesh_sampling Automatic sampling of 3D pointcloud from CAD models
  mesh_sampling implements samplers that convert from 3D CAD models to PCL pointcloud (PCD)
 
-Package: libmesh-sampling1
+Package: libmesh-sampling
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},

@@ -1,4 +1,3 @@
 usr/include/*
-usr/lib/libmesh_sampling.so
 usr/lib/*/pkgconfig/*
 usr/lib/cmake/*

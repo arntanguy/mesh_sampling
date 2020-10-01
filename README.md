@@ -63,7 +63,7 @@ Example
 ==
 
 ```bash
-./src/example <path_to_model>.<supported_format>
+mesh_sampling <path_to_model>.<supported_format>
 pcl_viewer /tmp/example_normal.pcd -normals_scale 5 -normals 1
 pcl_viewer /tmp/example_xyz.pcd
 pcl_viewer /tmp/example_rgb.pcd
