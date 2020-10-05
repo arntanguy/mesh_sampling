@@ -9,6 +9,8 @@ Vcs-Browser: http://github.com/arntanguy/mesh_sampling
 Build-Depends: debhelper (>= 9),
                pkg-config,
                cmake,
+               libboost-filesystem-dev,
+               libboost-program-options-dev,
                libpcl-dev,
                libassimp-dev,
                doxygen,
@@ -19,6 +21,8 @@ Section: libdevel
 Architecture: any
 Depends: pkg-config,
          mesh-sampling (= ${binary:Version}),
+         libboost-filesystem-dev,
+         libboost-program-options-dev,
          libeigen3-dev (>= 3.2),
          libpcl-common-dev,
          libpcl-io-dev,

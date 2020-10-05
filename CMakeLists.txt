@@ -27,6 +27,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 # For now, manually add those to the mesh_samplingConfig.cmake script
 find_package(mesh_sampling_3rd_party_assimp REQUIRED)
 find_package(mesh_sampling_3rd_party_PCL REQUIRED)
+add_project_dependency(Boost COMPONENTS program_options REQUIRED)
 
 # Export scripts to find the custom PCL/assimp dependencies
 install(FILES

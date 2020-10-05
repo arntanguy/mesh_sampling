@@ -76,12 +76,21 @@ sudo make install
 
 ### Exectuable
 
-A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. For the time being no other command line options are supported, feel free to submit a pull request!
+A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. The command line is of the general form: 
+
+```
+mesh_sampling /path/to/model.<supported_mesh_format> /path/to/cloud/cloud.<supported_cloud_format> --type xyz_rgb_normal --samples 10000 --binary
+```
+
+Where:
+- `supported_mesh_format` is one of the mesh format supported by `ASSIMP` (commonly DAE, STL, OBJ)
+- `supported_cloud_format` is a PCL formal (`pcd` or `ply`), or qhull's format (`qc`)
+
+See `mesh_sampling --help` for more options.
+
+Example:
 
 ```bash
-mesh_sampling </path/to/model> 10000
-pcl_viewer /tmp/example_normal.pcd -normals_scale 5 -normals 1
-pcl_viewer /tmp/example_xyz.pcd
-pcl_viewer /tmp/example_rgb.pcd
-pcl_viewer /tmp/example_rgb_normal.pcd
+mesh_sampling /path/to/model.dae /tmp/cloud.pcd --type xyz_rgb_normal --samples 10000 --binary
+pcl_viewer /tmp/cloud.pcd -normals_scale 5 -normals 1
 ```
