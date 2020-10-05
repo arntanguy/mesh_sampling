@@ -1,26 +1,13 @@
-// Copyright 2017 CNRS-UM LIRMM
-// Copyright 2017 Arnaud TANGUY <arnaud.tanguy@lirmm.fr>
-//
-// This file is part of mesh_sampling.
-//
-// mesh_sampling is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// mesh_sampling is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with mesh_sampling.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * Copyright 2017-2020 CNRS-UM LIRMM, CNRS-AIST JRL
+ */
 
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 #include <mesh_sampling/assimp_scene.h>
 #include <mesh_sampling/weighted_random_sampling.h>
+#include <mesh_sampling/qhull_io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
@@ -38,23 +25,35 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
   WeightedRandomSampling<PointT> sampler(scene);
   auto cloud = sampler.weighted_random_sampling(N);
 
+  auto out = out_path.string();
   auto extension = out_path.extension();
+  bool success = true;
   if(extension == ".pcd")
   {
-    pcl::io::savePCDFile(out_path.string(), *cloud, binary_mode);
+    success = pcl::io::savePCDFile(out, *cloud, binary_mode) == 0;
   }
   else if(extension == ".ply")
   {
-    pcl::io::savePLYFile(out_path.string(), *cloud, binary_mode);
+    success = pcl::io::savePLYFile(out, *cloud, binary_mode) == 0;
   }
   else if(extension == ".qc")
   {
-    std::cout << "QC export not implemented yet" << std::endl;
-    exit(1);
+    success = mesh_sampling::io::saveQhullFile(out, *cloud);
   }
   else
   {
     std::cerr << "Output pointcloud type " << extension << " is not supported";
+    exit(1);
+  }
+
+  if(!success)
+  {
+    std::cerr << "Saving to " << out << " failed." << std::endl;
+    exit(1);
+  }
+  else
+  {
+    std::cout << "Pointcloud saved to " << out << std::endl;
   }
 }
 
@@ -132,31 +131,18 @@ int main(int argc, char ** argv)
   if(cloud_type == "xyz")
   {
     create_cloud<pcl::PointXYZ>(mesh->scene(), N, out_p, cloud_binary);
-    // WeightedRandomSampling<pcl::PointXYZ> sampling_xyz(mesh->scene());
-    // auto cloud_xyz = sampling_xyz.weighted_random_sampling(N);
-    // pcl::io::savePCDFileASCII("/tmp/example_xyz.pcd", *cloud_xyz);
-    // std::cout << "Cloud size: " << cloud_xyz->size() << ", expected: " << N << std::endl;
   }
   else if(cloud_type == "xyz_rgb")
   {
     create_cloud<pcl::PointXYZRGB>(mesh->scene(), N, out_p, cloud_binary);
-    // WeightedRandomSampling<pcl::PointXYZRGB> sampling_rgb(mesh->scene());
-    // auto cloud_rgb = sampling_rgb.weighted_random_sampling(N);
-    // pcl::io::savePCDFileASCII("/tmp/example_rgb.pcd", *cloud_rgb);
   }
   else if(cloud_type == "xyz_normal")
   {
     create_cloud<pcl::PointXYZRGB>(mesh->scene(), N, out_p, cloud_binary);
-    // WeightedRandomSampling<pcl::PointNormal> sampling_normal(mesh->scene());
-    // auto cloud_normal = sampling_normal.weighted_random_sampling(N);
-    // pcl::io::savePCDFileASCII("/tmp/example_normal.pcd", *cloud_normal);
   }
   else if(cloud_type == "xyz_rgb_normal")
   {
     create_cloud<pcl::PointXYZRGBNormal>(mesh->scene(), N, out_p, cloud_binary);
-    // WeightedRandomSampling<pcl::PointXYZRGBNormal> sampling_rgb_normal(mesh->scene());
-    // auto cloud_rgb_normal = sampling_rgb_normal.weighted_random_sampling(N);
-    // pcl::io::savePCDFileASCII("/tmp/example_rgb_normal.pcd", *cloud_rgb_normal);
   }
 
   return 0;

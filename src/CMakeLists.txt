@@ -1,5 +1,8 @@
 add_library(mesh_sampling SHARED
   weighted_random_sampling.cpp
+  ../include/mesh_sampling/assimp_scene.h
+  ../include/mesh_sampling/weighted_random_sampling.h
+  ../include/mesh_sampling/qhull_io.h
   )
 target_link_libraries(mesh_sampling PUBLIC mesh_sampling::assimp)
 target_link_libraries(mesh_sampling PUBLIC mesh_sampling::PCL)

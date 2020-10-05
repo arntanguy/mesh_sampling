@@ -74,7 +74,7 @@ sudo make install
 
 ## Usage
 
-### Exectuable
+### Command-line tool
 
 A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. The command line is of the general form: 
 
@@ -93,4 +93,13 @@ Example:
 ```bash
 mesh_sampling /path/to/model.dae /tmp/cloud.pcd --type xyz_rgb_normal --samples 10000 --binary
 pcl_viewer /tmp/cloud.pcd -normals_scale 5 -normals 1
+```
+
+### Generating convex files using qhull
+
+To generate convex files, you will first need to convex your mesh to qhull's `.qc` format, then use `qconvex` to generate the convex hull.
+
+```
+mesh_sampling /path/to/model.<supported_mesh_format> /tmp/test.qc --type xyz --samples 10000
+qconvex TI /tmp/test.qc TO /tmp/test-ch.txt Qt o f
 ```
