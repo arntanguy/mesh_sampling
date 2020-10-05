@@ -2,6 +2,7 @@
  * Copyright 2017-2020 CNRS-UM LIRMM, CNRS-AIST JRL
  */
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
 #include <algorithm>
@@ -26,7 +27,7 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
   auto cloud = sampler.weighted_random_sampling(N);
 
   auto out = out_path.string();
-  auto extension = out_path.extension();
+  auto extension = boost::algorithm::to_lower_copy(out_path.extension().string());
   bool success = true;
   if(extension == ".pcd")
   {
@@ -92,6 +93,7 @@ int main(int argc, char ** argv)
   std::string out_path = vm["out"].as<std::string>();
   bfs::path in_p(in_path);
   bfs::path out_p(out_path);
+  auto out_extension = boost::algorithm::to_lower_copy(out_p.extension().string());
   unsigned N = vm["samples"].as<unsigned>();
   std::string cloud_type = vm["type"].as<std::string>();
   bool cloud_binary = vm["binary"].as<bool>();
@@ -108,7 +110,7 @@ int main(int argc, char ** argv)
     }
   };
   check_supported(supported_cloud_type, cloud_type);
-  check_supported(supported_extensions, out_p.extension().string());
+  check_supported(supported_extensions, out_extension);
 
   // Generate pointcloud
   // ASSIMPScene loader should be used and kept in scope for as long as the mesh
