@@ -36,6 +36,7 @@ Requirements:
 - cmake >3.11
 - Eigen3
 - PCL 1.7
+- Boost (program_options and filesystem)
 
 If you do not already have a recent cmake installation (>3.11), you will need to install it. On Ubuntu bionic, this can be done by adding the official [Kitware PPA](https://apt.kitware.com/), and updating cmake
 
@@ -74,14 +75,32 @@ sudo make install
 
 ## Usage
 
-### Exectuable
+### Command-line tool
 
-A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. For the time being no other command line options are supported, feel free to submit a pull request!
+A simple binary executable `mesh_sampling` is provided. It'll convert any model supported by ASSIMP into its corresponding pointcloud with a given number of points. The command line is of the general form: 
+
+```
+mesh_sampling /path/to/model.<supported_mesh_format> /path/to/cloud/cloud.<supported_cloud_format> --type xyz_rgb_normal --samples 10000 --binary
+```
+
+Where:
+- `supported_mesh_format` is one of the mesh format supported by `ASSIMP` (commonly DAE, STL, OBJ)
+- `supported_cloud_format` is a PCL formal (`pcd` or `ply`), or qhull's format (`qc`)
+
+See `mesh_sampling --help` for more options.
+
+Example:
 
 ```bash
-mesh_sampling </path/to/model> 10000
-pcl_viewer /tmp/example_normal.pcd -normals_scale 5 -normals 1
-pcl_viewer /tmp/example_xyz.pcd
-pcl_viewer /tmp/example_rgb.pcd
-pcl_viewer /tmp/example_rgb_normal.pcd
+mesh_sampling /path/to/model.dae /tmp/cloud.pcd --type xyz_rgb_normal --samples 10000 --binary
+pcl_viewer /tmp/cloud.pcd -normals_scale 5 -normals 1
+```
+
+### Generating convex files using qhull
+
+To generate convex files, you will first need to convex your mesh to qhull's `.qc` format, then use `qconvex` to generate the convex hull.
+
+```
+mesh_sampling /path/to/model.<supported_mesh_format> /tmp/test.qc --type xyz --samples 10000
+qconvex TI /tmp/test.qc TO /tmp/test-ch.txt Qt o f
 ```

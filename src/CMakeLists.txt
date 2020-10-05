@@ -1,5 +1,8 @@
 add_library(mesh_sampling SHARED
   weighted_random_sampling.cpp
+  ../include/mesh_sampling/assimp_scene.h
+  ../include/mesh_sampling/weighted_random_sampling.h
+  ../include/mesh_sampling/qhull_io.h
   )
 target_link_libraries(mesh_sampling PUBLIC mesh_sampling::assimp)
 target_link_libraries(mesh_sampling PUBLIC mesh_sampling::PCL)
@@ -15,7 +18,8 @@ install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
 
 add_executable(mesh_sampling_bin mesh_sampling.cpp)
-target_link_libraries(mesh_sampling_bin mesh_sampling)
+target_link_libraries(mesh_sampling_bin PUBLIC mesh_sampling)
+target_link_libraries(mesh_sampling_bin PUBLIC Boost::program_options Boost::filesystem)
 set_target_properties(mesh_sampling_bin PROPERTIES OUTPUT_NAME mesh_sampling)
 
 install(TARGETS mesh_sampling_bin
