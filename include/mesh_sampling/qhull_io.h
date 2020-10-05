@@ -3,9 +3,9 @@
  */
 
 #pragma once
-#include <string>
 #include <fstream>
 #include <pcl/point_cloud.h>
+#include <string>
 
 namespace mesh_sampling
 {
@@ -32,6 +32,5 @@ bool saveQhullFile(const std::string & path, const pcl::PointCloud<PointT> & clo
   return true;
 }
 
-
-} /* io */
-} /* mesh_sampling */
+} // namespace io
+} // namespace mesh_sampling

@@ -2,17 +2,17 @@
  * Copyright 2017-2020 CNRS-UM LIRMM, CNRS-AIST JRL
  */
 
-#include <iostream>
+#include <boost/filesystem.hpp>
+
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <mesh_sampling/assimp_scene.h>
-#include <mesh_sampling/weighted_random_sampling.h>
 #include <mesh_sampling/qhull_io.h>
+#include <mesh_sampling/weighted_random_sampling.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
-
-#include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -98,8 +98,7 @@ int main(int argc, char ** argv)
   auto supported_cloud_type = std::vector<std::string>{"xyz", "xyz_rgb", "xyz_normal", "xyz_rgb_normal"};
   auto supported_extensions = std::vector<std::string>{".ply", ".pcd", ".qc"};
 
-  auto check_supported = [](const std::vector<std::string> & supported, const std::string & value)
-  {
+  auto check_supported = [](const std::vector<std::string> & supported, const std::string & value) {
     if(std::find(supported.begin(), supported.end(), value) == supported.end())
     {
       std::cerr << "This program only supports: ";
