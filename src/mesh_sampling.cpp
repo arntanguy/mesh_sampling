@@ -52,10 +52,6 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
     std::cerr << "Saving to " << out << " failed." << std::endl;
     exit(1);
   }
-  else
-  {
-    std::cout << "Pointcloud saved to " << out << std::endl;
-  }
 }
 
 int main(int argc, char ** argv)
@@ -128,7 +124,6 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-  std::cout << "Sampling " << N << " points from " << in_path << std::endl;
   if(cloud_type == "xyz")
   {
     create_cloud<pcl::PointXYZ>(mesh->scene(), N, out_p, cloud_binary);
