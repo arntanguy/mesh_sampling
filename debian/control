@@ -13,6 +13,7 @@ Build-Depends: debhelper (>= 9),
                libboost-program-options-dev,
                libpcl-dev,
                libassimp-dev,
+               libproj-dev,
                doxygen,
                libeigen3-dev (>= 3.2)
 
@@ -27,6 +28,7 @@ Depends: pkg-config,
          libpcl-common-dev,
          libpcl-io-dev,
          libassimp-dev,
+         libproj-dev,
          ${misc:Depends}
 Description: mesh_sampling Automatic sampling of 3D pointcloud from CAD models
  mesh_sampling implements samplers that convert from 3D CAD models to PCL pointcloud (PCD)
