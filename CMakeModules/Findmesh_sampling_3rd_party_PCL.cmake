@@ -15,10 +15,10 @@
 # executable or the geos library
 
 if(NOT TARGET mesh_sampling::PCL)
-  message(STATUS "Checking for module 'PCL >1.8 (common, io)'")
-  find_package(PCL 1.8 COMPONENTS common io QUIET)
+  message(STATUS "Checking for module 'PCL >1.7 (common, io)'")
+  find_package(PCL 1.7 COMPONENTS common io QUIET)
   if(NOT ${PCL_FOUND})
-    message(FATAL_ERROR "  Could not find the PCL 1.8 library")
+    message(FATAL_ERROR "  Could not find the PCL 1.7 library")
   else()
     message(STATUS "  Found PCL ${PCL_VERSION} (common, io)")
     add_library(mesh_sampling::PCL INTERFACE IMPORTED)
