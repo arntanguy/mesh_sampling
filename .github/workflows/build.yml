@@ -49,7 +49,7 @@ jobs:
         compiler: ${{ matrix.compiler }}
         build-type: ${{ matrix.build-type }}
         ubuntu: |
-          apt: libeigen3-dev libpcl-dev libassimp-dev libboost-test-dev doxygen doxygen-latex
+          apt: libeigen3-dev libpcl-dev libproj-dev libassimp-dev libboost-test-dev doxygen doxygen-latex
     - name: Build and test
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
