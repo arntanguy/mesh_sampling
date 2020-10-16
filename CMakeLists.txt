@@ -32,13 +32,13 @@ add_project_dependency(Boost COMPONENTS filesystem program_options REQUIRED)
 # Export scripts to find the custom PCL/assimp dependencies
 install(FILES
   CMakeModules/Findmesh_sampling_3rd_party_PCL.cmake
-  DESTINATION /usr/local/lib/cmake/mesh_sampling
+  DESTINATION lib/cmake/mesh_sampling
   RENAME mesh_sampling_3rd_party_PCLConfig.cmake
 )
 
 install(FILES
   CMakeModules/Findmesh_sampling_3rd_party_assimp.cmake
-  DESTINATION /usr/local/lib/cmake/mesh_sampling
+  DESTINATION lib/cmake/mesh_sampling
   RENAME mesh_sampling_3rd_party_assimpConfig.cmake
 )
 
