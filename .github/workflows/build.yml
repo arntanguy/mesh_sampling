@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04]
+        os: [ubuntu-16.04, ubuntu-18.04]
         build-type: [RelWithDebInfo, Release]
         compiler: [gcc, clang]
 
@@ -49,9 +49,17 @@ jobs:
         compiler: ${{ matrix.compiler }}
         build-type: ${{ matrix.build-type }}
         ubuntu: |
-          apt: libeigen3-dev libpcl-dev libassimp-dev libboost-test-dev doxygen doxygen-latex
+          apt: libeigen3-dev libpcl-dev libproj-dev libassimp-dev libboost-test-dev doxygen doxygen-latex
     - name: Build and test
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
         compiler: ${{ matrix.compiler }}
         build-type: ${{ matrix.build-type }}
+    # Checks that finding the library and building against it works
+    - name: Test consumption
+      uses:  arntanguy/github-actions/build-cmake-project@topic/skip-install
+      with:
+        compiler: ${{ matrix.compiler }} 
+        build-type: Release 
+        project-dir: tests/test_mesh_sampling
+        skip-install: "true"

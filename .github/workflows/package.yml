@@ -8,8 +8,10 @@ name: Package mesh_sampling
 
 on:
   push:
+    paths-ignore:
+      - ".github/workflows/build.yml"
     branches:
-      - master
+      - "**"
 
 jobs:
   # This job build binary packages for Ubuntu
@@ -17,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dist: [bionic, focal]
+        dist: [xenial, bionic, focal]
         arch: [amd64]
     runs-on: ubuntu-18.04
     steps:
@@ -51,6 +53,7 @@ jobs:
         dist: [bionic,focal]
         arch: [amd64]
     runs-on: ubuntu-18.04
+    if: github.ref == 'refs/heads/master' && github.repository == 'arntanguy/mesh_sampling'
     steps:
     - name: Download packages
       uses: actions/download-artifact@v1
