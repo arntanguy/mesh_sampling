@@ -17,6 +17,8 @@
 if(NOT TARGET mesh_sampling::PCL)
   message(STATUS "Checking for module 'PCL >1.7 (common, io)'")
   find_package(PCL 1.7 COMPONENTS common io QUIET)
+  # On ubuntu 16.04, PCL erroneously links against a non-existant vtkproj4 target
+  list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
   if(NOT ${PCL_FOUND})
     message(FATAL_ERROR "  Could not find the PCL 1.7 library")
   else()
