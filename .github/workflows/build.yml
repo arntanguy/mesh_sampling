@@ -56,10 +56,8 @@ jobs:
         compiler: ${{ matrix.compiler }}
         build-type: ${{ matrix.build-type }}
     # Checks that finding the library and building against it works
-    - name: Test consumption
-      uses:  arntanguy/github-actions/build-cmake-project@topic/skip-install
-      with:
-        compiler: ${{ matrix.compiler }} 
-        build-type: Release 
-        project-dir: tests/test_mesh_sampling
-        skip-install: "true"
+    - name: Check usage
+      shell: bash
+      run: |
+        set -x
+        ./.github/workflows/scripts/test-usage.sh ${{ matrix.build-type }}
