@@ -27,9 +27,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-16.04, ubuntu-18.04]
-        build-type: [RelWithDebInfo, Release]
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        build-type: [Debug, RelWithDebInfo]
         compiler: [gcc, clang]
+        exclude:
+          # ABI linking issues with stock PCL
+          - os: ubuntu-16.04
+            compiler: clang
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -39,7 +43,7 @@ jobs:
     - name: Install cmake
       run: |
         wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add -
-        sudo apt-add-repository -y 'deb https://apt.kitware.com/ubuntu/ bionic main'
+        sudo apt-add-repository -y "deb https://apt.kitware.com/ubuntu/ $(lsb_release -sc) main"
         sudo apt-get -qq update
         sudo apt-get -qq install cmake
         cmake --version
