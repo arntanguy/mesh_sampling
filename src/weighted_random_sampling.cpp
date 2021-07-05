@@ -4,6 +4,9 @@
 
 #include "mesh_sampling/weighted_random_sampling.h"
 
+#include <effolkronium/random.hpp>
+using Random = effolkronium::random_static;
+
 namespace mesh_sampling
 {
 
@@ -30,8 +33,8 @@ Eigen::Vector3f random_point_in_triangle(const Eigen::Vector3f & v1,
                                          const Eigen::Vector3f & v2,
                                          const Eigen::Vector3f & v3)
 {
-  float u = randMToN<float>(0, 1);
-  float v = randMToN<float>(0, 1);
+  float u = Random::get(0.0f, 1.0f);
+  float v = Random::get(0.0f, 1.0f);
   if(u + v > 1)
   {
     u = 1 - u;
