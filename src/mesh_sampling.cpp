@@ -50,7 +50,11 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
     convex.setInputCloud(shared_cloud);
     pcl::PolygonMesh mesh;
     convex.reconstruct(mesh);
+#if PCL_VERSION_COMPARE(>=, 1, 8, 0)
     success = pcl::io::savePolygonFileSTL(out, mesh, binary_mode);
+#else
+    success = pcl::io::savePolygonFileSTL(out, mesh);
+#endif
   }
   else
   {
