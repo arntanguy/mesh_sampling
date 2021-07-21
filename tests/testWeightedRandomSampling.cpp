@@ -12,6 +12,10 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 
+#ifndef PROJECT_SOURCE_DIR
+#  error "PROJECT_SOURCE_DIR must be defined to compile this file"
+#endif
+
 using namespace mesh_sampling;
 
 // This is a very simple test that merely loads a sample CAD model,
@@ -20,7 +24,7 @@ using namespace mesh_sampling;
 // after sampling is as expected
 BOOST_AUTO_TEST_CASE(TestWeightedRandomSampling)
 {
-  const std::string model_path = "../../sample/suzanne.obj";
+  const std::string model_path = PROJECT_SOURCE_DIR "/sample/suzanne.obj";
   size_t N = 1000;
 
   BOOST_REQUIRE_THROW(ASSIMPScene("wrong path.dae"), std::runtime_error);

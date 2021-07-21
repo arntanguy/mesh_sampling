@@ -63,12 +63,6 @@ std::vector<SampleT> weighted_random_choice(const std::vector<SampleT> & samples
   return vec;
 }
 
-template<typename T>
-T randMToN(T M, T N)
-{
-  return M + (static_cast<T>(std::rand()) / (RAND_MAX / (N - M)));
-}
-
 /**
  * @brief Create pointcloud from MESH using weighted random sampling
  *

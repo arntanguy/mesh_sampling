@@ -13,7 +13,9 @@
 #include <mesh_sampling/weighted_random_sampling.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_lib_io.h>
 #include <pcl/point_types.h>
+#include <pcl/surface/convex_hull.h>
 namespace bfs = boost::filesystem;
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -41,6 +43,48 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
   {
     success = mesh_sampling::io::saveQhullFile(out, *cloud);
   }
+  else if(extension == ".stl")
+  {
+    pcl::ConvexHull<PointT> convex{};
+    const auto shared_cloud = boost::shared_ptr<const pcl::PointCloud<PointT>>(cloud.release());
+    convex.setInputCloud(shared_cloud);
+    pcl::PolygonMesh mesh;
+    convex.reconstruct(mesh);
+    pcl::PointCloud<PointT> cloud{};
+    pcl::fromPCLPointCloud2(mesh.cloud, cloud);
+
+    // Compute the convex center
+    Eigen::Vector3f center = Eigen::Vector3f::Zero();
+    for(auto & poly : mesh.polygons)
+    {
+      if(poly.vertices.size() != 3)
+      {
+        throw std::runtime_error("pcl::ConvexHull did not reconstruct a triangular mesh");
+      }
+      center += (cloud[poly.vertices[0]].getVector3fMap() + cloud[poly.vertices[1]].getVector3fMap()
+                 + cloud[poly.vertices[2]].getVector3fMap())
+                / (3 * mesh.polygons.size());
+    }
+
+    // Make sure all normals point away from the mesh center
+    // Since the mesh is convex this is enough to ensure the normals are consistent
+    for(auto & poly : mesh.polygons)
+    {
+      Eigen::Vector3f p1 = cloud[poly.vertices[0]].getVector3fMap();
+      Eigen::Vector3f p2 = cloud[poly.vertices[1]].getVector3fMap();
+      Eigen::Vector3f p3 = cloud[poly.vertices[2]].getVector3fMap();
+      Eigen::Vector3f n = (p2 - p1).cross(p3 - p1);
+      if(n.dot(center - p1) > 0)
+      {
+        std::swap(poly.vertices[1], poly.vertices[2]);
+      }
+    }
+#if PCL_VERSION_COMPARE(>=, 1, 8, 0)
+    success = pcl::io::savePolygonFileSTL(out, mesh, binary_mode);
+#else
+    success = pcl::io::savePolygonFileSTL(out, mesh);
+#endif
+  }
   else
   {
     std::cerr << "Output pointcloud type " << extension << " is not supported";
@@ -63,7 +107,7 @@ int main(int argc, char ** argv)
   desc.add_options()
     ("help", "Produce this message")
     ("in", po::value<std::string>(), "Input mesh (supported by ASSIMP)")
-    ("out", po::value<std::string>(), "Output file (ply, pcd, qc)")
+    ("out", po::value<std::string>(), "Output file (ply, pcd, qc, stl)")
     ("samples", po::value<unsigned>()->default_value(10000), "Number of points to sample")
     ("type", po::value<std::string>()->default_value("xyz_rgb_normal"), "Type of cloud to generate (xyz, xyz_rgb, xyz_rgb_normal)")
     ("binary", po::bool_switch()->default_value(false), "Outputs pointcloud in binary format (default: false)");
@@ -94,7 +138,7 @@ int main(int argc, char ** argv)
   std::string cloud_type = vm["type"].as<std::string>();
   bool cloud_binary = vm["binary"].as<bool>();
   auto supported_cloud_type = std::vector<std::string>{"xyz", "xyz_rgb", "xyz_normal", "xyz_rgb_normal"};
-  auto supported_extensions = std::vector<std::string>{".ply", ".pcd", ".qc"};
+  auto supported_extensions = std::vector<std::string>{".ply", ".pcd", ".qc", ".stl"};
 
   auto check_supported = [](const std::vector<std::string> & supported, const std::string & value) {
     if(std::find(supported.begin(), supported.end(), value) == supported.end())
@@ -134,7 +178,7 @@ int main(int argc, char ** argv)
   }
   else if(cloud_type == "xyz_normal")
   {
-    create_cloud<pcl::PointXYZRGB>(mesh->scene(), N, out_p, cloud_binary);
+    create_cloud<pcl::PointNormal>(mesh->scene(), N, out_p, cloud_binary);
   }
   else if(cloud_type == "xyz_rgb_normal")
   {
