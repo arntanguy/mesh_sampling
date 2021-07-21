@@ -50,6 +50,35 @@ void create_cloud(const aiScene * scene, unsigned N, const bfs::path & out_path,
     convex.setInputCloud(shared_cloud);
     pcl::PolygonMesh mesh;
     convex.reconstruct(mesh);
+    pcl::PointCloud<PointT> cloud{};
+    pcl::fromPCLPointCloud2(mesh.cloud, cloud);
+
+    // Compute the convex center
+    Eigen::Vector3f center = Eigen::Vector3f::Zero();
+    for(auto & poly : mesh.polygons)
+    {
+      if(poly.vertices.size() != 3)
+      {
+        throw std::runtime_error("pcl::ConvexHull did not reconstruct a triangular mesh");
+      }
+      center += (cloud[poly.vertices[0]].getVector3fMap() + cloud[poly.vertices[1]].getVector3fMap()
+                 + cloud[poly.vertices[2]].getVector3fMap())
+                / (3 * mesh.polygons.size());
+    }
+
+    // Make sure all normals point away from the mesh center
+    // Since the mesh is convex this is enough to ensure the normals are consistent
+    for(auto & poly : mesh.polygons)
+    {
+      Eigen::Vector3f p1 = cloud[poly.vertices[0]].getVector3fMap();
+      Eigen::Vector3f p2 = cloud[poly.vertices[1]].getVector3fMap();
+      Eigen::Vector3f p3 = cloud[poly.vertices[2]].getVector3fMap();
+      Eigen::Vector3f n = (p2 - p1).cross(p3 - p1);
+      if(n.dot(center - p1) > 0)
+      {
+        std::swap(poly.vertices[1], poly.vertices[2]);
+      }
+    }
 #if PCL_VERSION_COMPARE(>=, 1, 8, 0)
     success = pcl::io::savePolygonFileSTL(out, mesh, binary_mode);
 #else
