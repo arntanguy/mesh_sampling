@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dist: [xenial, bionic, focal]
+        dist: [bionic, focal]
         arch: [amd64]
     runs-on: ubuntu-18.04
     steps:
