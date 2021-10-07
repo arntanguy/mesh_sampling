@@ -109,6 +109,7 @@ int main(int argc, char ** argv)
     ("in", po::value<std::string>(), "Input mesh (supported by ASSIMP)")
     ("out", po::value<std::string>(), "Output file (ply, pcd, qc, stl)")
     ("samples", po::value<unsigned>()->default_value(10000), "Number of points to sample")
+    ("scale", po::value<float>()->default_value(1.0), "Scale factor applied to the mesh")
     ("type", po::value<std::string>()->default_value("xyz_rgb_normal"), "Type of cloud to generate (xyz, xyz_rgb, xyz_rgb_normal)")
     ("binary", po::bool_switch()->default_value(false), "Outputs pointcloud in binary format (default: false)");
   // clang-format on
@@ -160,7 +161,14 @@ int main(int argc, char ** argv)
   std::unique_ptr<ASSIMPScene> mesh = nullptr;
   try
   {
-    mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(in_path));
+    if(vm.count("scale"))
+    {
+      mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(in_path, vm["scale"].as<float>()));
+    }
+    else
+    {
+      mesh = std::unique_ptr<ASSIMPScene>(new ASSIMPScene(in_path));
+    }
   }
   catch(std::runtime_error & e)
   {

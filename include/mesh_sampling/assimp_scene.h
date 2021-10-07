@@ -10,25 +10,21 @@ namespace mesh_sampling
 
 class ASSIMPScene
 {
-  // Create an instance of the Importer class
   // The importer will automatically delete the scene
   Assimp::Importer importer;
   const aiScene * scene_;
+  std::string modelPath_;
 
 public:
-  ASSIMPScene(const std::string & model_path)
-  : // And have it read the given file with some example postprocessing
-    // Usually - if speed is not the most important aspect for you - you'll
-    // propably to request more postprocessing than we do in this example.
-    scene_(importer.ReadFile(model_path,
-                             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals
-                                 | aiProcess_FixInfacingNormals))
+  ASSIMPScene(const std::string & model_path) : modelPath_(model_path)
   {
-    // If the import failed, report it
-    if(!scene_)
-    {
-      throw std::runtime_error(importer.GetErrorString());
-    }
+    loadScene();
+  }
+
+  ASSIMPScene(const std::string & model_path, float scale) : modelPath_(model_path)
+  {
+    importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, scale);
+    loadScene();
   }
 
   /**
@@ -39,6 +35,20 @@ public:
   const aiScene * scene() const
   {
     return scene_;
+  }
+
+protected:
+  void loadScene()
+  {
+    scene_ =
+        importer.ReadFile(modelPath_, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals
+                                          | aiProcess_FixInfacingNormals | aiProcess_GlobalScale);
+
+    // If the import failed, report it
+    if(!scene_)
+    {
+      throw std::runtime_error(importer.GetErrorString());
+    }
   }
 };
 
